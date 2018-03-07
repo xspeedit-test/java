@@ -1,7 +1,6 @@
 package fr.service;
 
-import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang3.StringUtils;
@@ -21,9 +20,14 @@ public class CardboardService {
 	static public String generateListCardBoard(String chaine) throws NumberFormatException  {
 		String optimizedCardboard = new String();
 		if (StringUtils.isNotBlank(chaine)) {
-			List<String> listChaine = new LinkedList<String>(Arrays.asList(chaine.split("")));
+			List<Integer> listChaine = new ArrayList<>();
+			// convert chaîne to list integer
+			for (char ch: chaine.toCharArray()) {
+			    listChaine.add(Integer.parseInt(Character.toString(ch)));
+			}
+			
 			while(!ZERO.equals(listChaine.size())) {
-				Integer lot = Integer.parseInt(listChaine.get(0));
+				Integer lot = listChaine.get(0);
 				listChaine.remove(0);
 				optimizedCardboard += findLotInList(lot, listChaine).concat("/");
 			}
@@ -39,24 +43,23 @@ public class CardboardService {
 	 * @return string
 	 * @throws NumberFormatException
 	 */
-	static private String findLotInList(Integer lot, List<String> listChaine) 
+	static private String findLotInList(Integer lot, List<Integer> listChaine) 
 			throws NumberFormatException {
 		String lots = String.valueOf(lot);
 		int sum = lot;
 		for (int i = 0; i < listChaine.size(); i++) {
-			String value = listChaine.get(i);
-			int number = Integer.parseInt(value);
+			Integer value = listChaine.get(i);
 			// cardboard is full, go next cardboard
-			if (DIX.equals(sum + number)) {
-				sum = sum + number;
-				lots = lots.concat(value);
+			if (DIX.equals(sum + value)) {
+				sum = sum + value;
+				lots = lots.concat(value.toString());
 				removeLotInList(value, listChaine);
 				break;
 			}
 			// cardboard is not full
-			else if (sum + number < 10) {
-				sum = sum + number;
-				lots = lots.concat(value);
+			else if (sum + value < 10) {
+				sum = sum + value;
+				lots = lots.concat(value.toString());
 				removeLotInList(value, listChaine);
 			}
 		}
@@ -65,11 +68,11 @@ public class CardboardService {
 	
 	/**
 	 * Remove lot in list
-	 * @param lot
+	 * @param value
 	 * @param listChaine
 	 */
-	static private void removeLotInList(String lot, List<String> listChaine) {
-		listChaine.remove(lot);
+	static private void removeLotInList(Integer value, List<Integer> listChaine) {
+		listChaine.remove(value);
 	}
 	
 }
